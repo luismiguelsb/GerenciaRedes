@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from tkinter import *
+from Tkinter import *
 from easysnmp import Session
 import datetime
 
@@ -7,24 +7,29 @@ import datetime
 # FUNCTIONS
 def click_entrar():
     endereco = textentryEndereco.get()
+    usuario = textentryUsuario.get()
+    senha = textentrySenha.get()
 
     global session 
     session = Session(hostname=endereco, community='public', version=2, use_sprint_value = True)
+    session = Session(hostname=endereco, version=3, security_level="auth_with_privacy",
+         security_username=usuario, auth_protocol="MD5", auth_password=senha,privacy_protocol="DES", privacy_password=senha)
+
 
     textEndereco.insert(END, endereco)
 
-    name = session.get('sysName.0')
+    name = session.get('sysName.0').value
     textName.insert(END, name)
 
-    uptime = session.get('sysUpTimeInstance')
+    uptime = session.get('sysUpTimeInstance').value
     textUptime.insert(END, uptime)
 
     countBulk = session.get_bulk(['ifOutOctets'], 0, 2)
-    bytesOut = countBulk[1]
+    bytesOut = countBulk[1].value
     textBytesOut.insert(END, bytesOut)
 
     countBulk = session.get_bulk(['ifInOctets'], 0, 2)
-    bytesIn = countBulk[1]
+    bytesIn = countBulk[1].value
     textBytesIn.insert(END, bytesIn)
 
     textentryEndereco.delete(0, END)
