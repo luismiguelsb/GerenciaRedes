@@ -77,6 +77,28 @@ def click_entrar():
     except:
 	labelErro.config(text="Não foi possível abrir a sessão!")
 
+def click_ConfigTaxas():
+    topWindowConfigTaxas = Toplevel()
+    topWindowConfigTaxas.configure(background="black")
+    
+    # TEXTO (UPLOAD)
+    Label(topWindowConfigTaxas, text = "Taxa Upload:", bg="black", fg="white", font="none 14 bold").pack(pady=10)
+    global taxaUpload
+    taxaUpload = Entry(windowLogin, width=30, bg="white", font="none 12")
+    taxaUpload.pack(padx=10, pady=10)
+
+    # TEXTO (DOWNLOAD)
+    Label(topWindowConfigTaxas, text = "Taxa Download:", bg="black", fg="white", font="none 14 bold").pack(pady=10)
+    global taxaDownload
+    taxaDownload = Entry(windowLogin, width=30, bg="white", font="none 12")
+    taxaDownload.pack(padx=10, pady=10)
+
+    Button(topWindowConfigTaxas, text="Atualizar taxas", width="20", command=click_AttTaxas).pack(pady=10)
+
+
+    
+
+
 def click_taxaErros():
     topWindowErros = Toplevel()
     topWindowErros.configure(background="black")
@@ -210,6 +232,10 @@ textBytesIn.pack(padx=10)
 
 # BOTAO (TAXA DE ERROS)
 Button(windowPrincipal, text="TAXA DE ERROS", width="12", command=click_taxaErros).pack(pady=10)
+
+# BOTAO (SETAR BANDA DOWNLOAD/UPLOAD)
+Button(windowPrincipal, text="CONFIGURAR TAXA UP/DOWN", width="25", command=click_ConfigTaxas).pack(pady=10)
+
 
 # BOTAO (FECHAR SESSAO)
 Button(windowPrincipal, text="FECHAR SESSÃO", width="12", command=click_fechar).pack(pady=10)
