@@ -10,32 +10,36 @@ def click_entrar():
     usuario = textentryUsuario.get()
     senha = textentrySenha.get()
 
-    global session 
-    session = Session(hostname=endereco, community='public', version=2, use_sprint_value = True)
-    session = Session(hostname=endereco, version=3, security_level="auth_with_privacy",
-         security_username=usuario, auth_protocol="MD5", auth_password=senha,privacy_protocol="DES", privacy_password=senha)
+    try:
+	    global session 
+	    #session = Session(hostname=endereco, community='public', version=2, use_sprint_value = True)
+	    session = Session(hostname=endereco, version=3, security_level="auth_with_privacy", security_username=usuario, auth_protocol="MD5", auth_password=senha,privacy_protocol="DES", privacy_password=senha, use_sprint_value = True)
 
+    	    textEndereco.insert(END, endereco)
 
-    textEndereco.insert(END, endereco)
+	    name = session.get('sysName.0').value
+	    textName.insert(END, name)
 
-    name = session.get('sysName.0').value
-    textName.insert(END, name)
+	    uptime = session.get('sysUpTimeInstance').value
+	    textUptime.insert(END, uptime)
 
-    uptime = session.get('sysUpTimeInstance').value
-    textUptime.insert(END, uptime)
+	    countBulk = session.get_bulk(['ifOutOctets'], 0, 2)
+	    bytesOut = countBulk[1].value
+	    textBytesOut.insert(END, bytesOut)
 
-    countBulk = session.get_bulk(['ifOutOctets'], 0, 2)
-    bytesOut = countBulk[1].value
-    textBytesOut.insert(END, bytesOut)
+	    countBulk = session.get_bulk(['ifInOctets'], 0, 2)
+	    bytesIn = countBulk[1].value
+	    textBytesIn.insert(END, bytesIn)
 
-    countBulk = session.get_bulk(['ifInOctets'], 0, 2)
-    bytesIn = countBulk[1].value
-    textBytesIn.insert(END, bytesIn)
+	    labelErro.config(text="")
+	    textentryEndereco.delete(0, END)
+	    textentryUsuario.delete(0, END)
+	    textentrySenha.delete(0, END)
+	    windowPrincipal.tkraise()
 
-    textentryEndereco.delete(0, END)
-    textentryUsuario.delete(0, END)
-    textentrySenha.delete(0, END)
-    windowPrincipal.tkraise()
+    except:
+	labelErro.config(text="Não foi possível abrir a sessão!")
+
 
 def click_sair():
     root.destroy()
@@ -84,12 +88,11 @@ Label(windowLogin, text = "Senha:", bg="black", fg="white", font="none 14 bold")
 textentrySenha = Entry(windowLogin, show="*", width=30, bg="white", font="none 12")
 textentrySenha.pack(padx=20)
 
-#Label(windowLogin, bg="black").pack()   # label dummy para ocupar uma linha (tipo \n)
-
 # BOTAO (ENTRAR)
 Button(windowLogin, text="ENTRAR", width=6, command=click_entrar).pack(padx=10, pady=10)
 
-Label(windowLogin, bg="black", width="50").pack()   # label dummy para ocupar uma linha (tipo \n)
+labelErro = Label(windowLogin, bg="black", fg="white", font="none 14 bold", width="50")
+labelErro.pack(pady=20)
 
 # BOTAO (SAIR)
 Button(windowLogin, text="SAIR", width="6", command=click_sair).pack(padx=5, pady=5, side=RIGHT)
