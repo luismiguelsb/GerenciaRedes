@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from Tkinter import *
+import ttk
 import tkMessageBox
 from easysnmp import Session
 import datetime
@@ -29,6 +30,7 @@ def updateTime():
 
 def updateBytes():
     countBulk = session.get_bulk(['ifOutOctets'], 0, 2)
+    global bytesOut
     bytesOut = countBulk[1].value
     textBytesOut.config(state=NORMAL)
     textBytesOut.delete(0.0, END)
@@ -36,13 +38,13 @@ def updateBytes():
     textBytesOut.config(state=DISABLED)
 
     countBulk = session.get_bulk(['ifInOctets'], 0, 2)
+    global bytesIn
     bytesIn = countBulk[1].value
     textBytesIn.config(state=NORMAL)
     textBytesIn.delete(0.0, END)
     textBytesIn.insert(END, bytesIn)
     textBytesIn.config(state=DISABLED)
     root.after(1000, updateBytes)
-    
 
 def click_entrar():
     endereco = textentryEndereco.get()
@@ -50,10 +52,12 @@ def click_entrar():
     senha = textentrySenha.get()
 
     try:
-	    global session 
+	    global session
 	    #session = Session(hostname=endereco, community='public', version=2, use_sprint_value = True)
-	    session = Session(hostname=endereco, version=3, security_level="auth_with_privacy", security_username=usuario, auth_protocol="MD5", auth_password=senha,privacy_protocol="DES", privacy_password=senha, use_sprint_value = True)
+	    session = Session(hostname=endereco, version=3, security_level="auth_with_privacy", security_username=usuario, auth_protocol=str(tipoAuth.get()), auth_password=senha,privacy_protocol=str(tipoCript.get()), privacy_password=senha, use_sprint_value = True)
 
+            print(str(tipoAuth.get()))
+            print(str(tipoCript.get()))
 
     	    textEndereco.insert(END, endereco)
             textEndereco.config(state=DISABLED)
@@ -66,7 +70,7 @@ def click_entrar():
 
 	    updateBytes()
 
-	    checkSites()
+            checkSites()
 
 	    labelErro.config(text="")
 	    textentryEndereco.delete(0, END)
@@ -78,25 +82,63 @@ def click_entrar():
 	labelErro.config(text="Não foi possível abrir a sessão!")
 
 def click_ConfigTaxas():
+    global topWindowConfigTaxas
     topWindowConfigTaxas = Toplevel()
     topWindowConfigTaxas.configure(background="black")
     
     # TEXTO (UPLOAD)
     Label(topWindowConfigTaxas, text = "Taxa Upload:", bg="black", fg="white", font="none 14 bold").pack(pady=10)
-    global taxaUpload
-    taxaUpload = Entry(windowLogin, width=30, bg="white", font="none 12")
-    taxaUpload.pack(padx=10, pady=10)
+    global taxaentryUpload
+    taxaentryUpload = Entry(topWindowConfigTaxas, width=30, bg="white", font="none 12")
+    taxaentryUpload.pack(padx=10, pady=10)
 
     # TEXTO (DOWNLOAD)
     Label(topWindowConfigTaxas, text = "Taxa Download:", bg="black", fg="white", font="none 14 bold").pack(pady=10)
-    global taxaDownload
-    taxaDownload = Entry(windowLogin, width=30, bg="white", font="none 12")
-    taxaDownload.pack(padx=10, pady=10)
+    global taxaentryDownload
+    taxaentryDownload = Entry(topWindowConfigTaxas, width=30, bg="white", font="none 12")
+    taxaentryDownload.pack(padx=10, pady=10)
 
     Button(topWindowConfigTaxas, text="Atualizar taxas", width="20", command=click_AttTaxas).pack(pady=10)
 
+    Label(topWindowConfigTaxas, text = "%download:", bg="black", fg="white", font="none 14 bold").pack(pady=10)
+    global varBarraIn
+    varBarraIn = DoubleVar()
+    varBarraIn.set(0)
+    global minhaBarraIn
+    minhaBarraIn = ttk.Progressbar(topWindowConfigTaxas, style="red.Horizontal.TProgressbar", variable=varBarraIn, maximum=0, length=300) 
+    minhaBarraIn.pack(pady=10)
 
+    Label(topWindowConfigTaxas, text = "%upload:", bg="black", fg="white", font="none 14 bold").pack(pady=10)
+    global varBarraOut
+    varBarraOut = DoubleVar()
+    varBarraOut.set(0)
+    global minhaBarraOut
+    minhaBarraOut = ttk.Progressbar(topWindowConfigTaxas, style="red.Horizontal.TProgressbar",variable=varBarraOut, maximum=0, length=300) 
+    minhaBarraOut.pack(pady=10)
+
+def click_AttTaxas():
+    MAX_IN = taxaentryDownload.get()
+    MAX_OUT = taxaentryUpload.get() 
     
+    minhaBarraIn['maximum'] = MAX_IN
+    minhaBarraOut['maximum'] = MAX_OUT
+
+    countBulk = session.get_bulk(['ifOutOctets'], 0, 2)
+    global bytesOutInicial
+    bytesOutInicial = countBulk[1].value
+
+    countBulk = session.get_bulk(['ifInOctets'], 0, 2)
+    global bytesInInicial
+    bytesInInicial = countBulk[1].value
+    
+    updateTaxas()
+
+def updateTaxas():
+    progressoBarraIn = int(bytesIn) - int(bytesInInicial)
+    progressoBarraOut = int(bytesOut) - int(bytesOutInicial)
+    varBarraIn.set(progressoBarraIn)
+    varBarraOut.set(progressoBarraOut)
+    root.after(1000, updateTaxas)
 
 
 def click_taxaErros():
@@ -151,8 +193,10 @@ def click_sair():
     root.destroy()
     exit()
 
-def click_fechar():
-    windowLogin.tkraise()
+#def click_fechar():
+    #session.close()
+ #   session = None
+  #  windowLogin.tkraise()
     
 
 ########## ROOT FRAME ----------------------------------------------------------------------------
@@ -189,11 +233,23 @@ Label(windowLogin, text = "Senha:", bg="black", fg="white", font="none 14 bold")
 textentrySenha = Entry(windowLogin, show="*", width=30, bg="white", font="none 12")
 textentrySenha.pack(padx=20)
 
+Label(windowLogin, text = "Autenticação:", bg="black", fg="white", font="none 14 bold").pack(pady=10)
+tipoAuth = StringVar()
+tipoAuth.set("MD5")
+Radiobutton(windowLogin, text="MD5", variable=tipoAuth, value="MD5", background="black", fg="white", selectcolor="black").pack()
+Radiobutton(windowLogin, text="SHA", variable=tipoAuth, value="SHA", background="black", fg="white", selectcolor="black").pack()
+
+Label(windowLogin, text = "Criptografia:", bg="black", fg="white", font="none 14 bold").pack(pady=10)
+tipoCript = StringVar()
+tipoCript.set("DES")
+Radiobutton(windowLogin, text="DES", variable=tipoCript, value="DES", background="black", fg="white", selectcolor="black").pack()
+Radiobutton(windowLogin, text="AES", variable=tipoCript, value="AES", background="black", fg="white", selectcolor="black").pack()
+
 # BOTAO (ENTRAR)
 Button(windowLogin, text="ENTRAR", width=6, command=click_entrar).pack(padx=10, pady=10)
 
 labelErro = Label(windowLogin, bg="black", fg="white", font="none 14 bold", width="50")
-labelErro.pack(pady=20)
+labelErro.pack(pady=10)
 
 # BOTAO (SAIR)
 Button(windowLogin, text="SAIR", width="6", command=click_sair).pack(padx=5, pady=5, side=RIGHT)
@@ -203,30 +259,30 @@ Button(windowLogin, text="SAIR", width="6", command=click_sair).pack(padx=5, pad
 ##########
 
 # TITULO
-Label(windowPrincipal, text = "Gerenciamento de Desempenho", bg="black", fg="white", font="none 20 bold").pack(pady=10, padx=20)
+Label(windowPrincipal, text = "Gerenciamento de Desempenho", bg="black", fg="white", font="none 20 bold").pack(pady=5, padx=20)
 
 # TEXTO (ENDERECO)
-Label(windowPrincipal, text = "Endereço:", bg="black", fg="white", font="none 14 bold").pack(pady=10)
+Label(windowPrincipal, text = "Endereço:", bg="black", fg="white", font="none 14 bold").pack(pady=5)
 textEndereco = Text(windowPrincipal, width=30, height=1, wrap=WORD, background="white", font="none 12")
 textEndereco.pack(padx=10)
 
 # TEXTO (NOME)
-Label(windowPrincipal, text = "Nome:", bg="black", fg="white", font="none 14 bold").pack(pady=10)
+Label(windowPrincipal, text = "Nome:", bg="black", fg="white", font="none 14 bold").pack(pady=5)
 textName = Text(windowPrincipal, width=30, height=1, wrap=WORD, background="white", font="none 12")
 textName.pack(padx=10)
 
 # TEXTO (UPTIME)
-Label(windowPrincipal, text = "Uptime:", bg="black", fg="white", font="none 14 bold").pack(pady=10)
+Label(windowPrincipal, text = "Uptime:", bg="black", fg="white", font="none 14 bold").pack(pady=5)
 textUptime = Text(windowPrincipal, width=30, height=1, wrap=WORD, background="white", font="none 12")
 textUptime.pack(padx=10)
 
 # TEXTO (BYTES OUT)
-Label(windowPrincipal, text = "Bytes Enviados:", bg="black", fg="white", font="none 14 bold").pack(pady=10)
+Label(windowPrincipal, text = "Bytes Enviados:", bg="black", fg="white", font="none 14 bold").pack(pady=5)
 textBytesOut = Text(windowPrincipal, width=30, height=1, wrap=WORD, background="white", font="none 12")
 textBytesOut.pack(padx=10)
 
 # TEXTO (BYTES IN)
-Label(windowPrincipal, text = "Bytes Recebidos:", bg="black", fg="white", font="none 14 bold").pack(pady=10)
+Label(windowPrincipal, text = "Bytes Recebidos:", bg="black", fg="white", font="none 14 bold").pack(pady=5)
 textBytesIn = Text(windowPrincipal, width=30, height=1, wrap=WORD, background="white", font="none 12")
 textBytesIn.pack(padx=10)
 
@@ -238,7 +294,7 @@ Button(windowPrincipal, text="CONFIGURAR TAXA UP/DOWN", width="25", command=clic
 
 
 # BOTAO (FECHAR SESSAO)
-Button(windowPrincipal, text="FECHAR SESSÃO", width="12", command=click_fechar).pack(pady=10)
+Button(windowPrincipal, text="FECHAR", width="12", command=click_sair).pack(pady=10)
 
 
 ###################### -------------------------------------------------------------------------------
