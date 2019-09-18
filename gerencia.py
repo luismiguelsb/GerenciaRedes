@@ -6,12 +6,26 @@ import datetime
 
 # FUNCTIONS
 def click_entrar():
-    endereco = textentryEndereco.get
+    endereco = textentryEndereco.get()
 
     global session 
     session = Session(hostname=endereco, community='public', version=2, use_sprint_value = True)
 
     textEndereco.insert(END, endereco)
+
+    name = session.get('sysName.0')
+    textName.insert(END, name)
+
+    uptime = session.get('sysUpTimeInstance')
+    textUptime.insert(END, uptime)
+
+    countBulk = session.get_bulk(['ifOutOctets'], 0, 2)
+    bytesOut = countBulk[1]
+    textBytesOut.insert(END, bytesOut)
+
+    countBulk = session.get_bulk(['ifInOctets'], 0, 2)
+    bytesIn = countBulk[1]
+    textBytesIn.insert(END, bytesIn)
 
     textentryEndereco.delete(0, END)
     textentryUsuario.delete(0, END)
@@ -23,6 +37,11 @@ def click_sair():
     exit()
 
 def click_fechar():
+    textEndereco.delete(0.0,END)
+    textName.delete(0.0,END)
+    textUptime.delete(0.0,END)
+    textBytesIn.delete(0.0,END)
+    textBytesOut.delete(0.0,END)
     windowLogin.tkraise()
     
 
@@ -79,32 +98,22 @@ Label(windowPrincipal, text = "Gerenciamento de Desempenho", bg="black", fg="whi
 Label(windowPrincipal, text = "Endereço:", bg="black", fg="white", font="none 14 bold").pack(pady=10)
 textEndereco = Text(windowPrincipal, width=30, height=1, wrap=WORD, background="white", font="none 12")
 textEndereco.pack(padx=10)
-textEndereco.delete(0.0, END)
-textEndereco.insert(END, "entered_text")
 
 Label(windowPrincipal, text = "Nome:", bg="black", fg="white", font="none 14 bold").pack(pady=10)
 textName = Text(windowPrincipal, width=30, height=1, wrap=WORD, background="white", font="none 12")
 textName.pack(padx=10)
-textName.delete(0.0, END)
-textName.insert(END, "entered_text")
 
 Label(windowPrincipal, text = "Uptime:", bg="black", fg="white", font="none 14 bold").pack(pady=10)
 textUptime = Text(windowPrincipal, width=30, height=1, wrap=WORD, background="white", font="none 12")
 textUptime.pack(padx=10)
-textUptime.delete(0.0, END)
-textUptime.insert(END, "entered_text")
 
 Label(windowPrincipal, text = "Bytes Enviados:", bg="black", fg="white", font="none 14 bold").pack(pady=10)
 textBytesOut = Text(windowPrincipal, width=30, height=1, wrap=WORD, background="white", font="none 12")
 textBytesOut.pack(padx=10)
-textBytesOut.delete(0.0, END)
-textBytesOut.insert(END, "entered_text")
 
 Label(windowPrincipal, text = "Bytes Recebidos:", bg="black", fg="white", font="none 14 bold").pack(pady=10)
 textBytesIn = Text(windowPrincipal, width=30, height=1, wrap=WORD, background="white", font="none 12")
 textBytesIn.pack(padx=10)
-textBytesIn.delete(0.0, END)
-textBytesIn.insert(END, "entered_text")
 
 # BOTAO (FECHAR SESSAO)
 Button(windowPrincipal, text="FECHAR SESSÃO", width="12", command=click_fechar).pack(pady=10)
