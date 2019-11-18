@@ -2,24 +2,46 @@
 
 TRABALHO 2: DOCKER + OWAMP
 
-* Configurar OWAMP
+* Referências:
+
+  https://github.com/sonata-nfv/tng-probes/wiki/owamp?fbclid=IwAR3WqMJmsTIdlyDg4q5DevLunQe6fOfG4bsAqVhhMX5J2Nq6hhitR-7wKs8
+
+  https://software.internet2.edu/owamp/
+
+  
+
+* Configurar OWAMP em um Host Linux (normalmente):
 
   `sudo wget -P /etc/apt/sources.list.d/ http://downloads.perfsonar.net/debian/perfsonar-jessie-release.list`
 
   `sudo wget -qO - http://downloads.perfsonar.net/debian/perfsonar-debian-official.gpg.key | sudo apt-key add -`
 
-  `apt update`
+  `sudo apt update`
 
-  `apt install perfsonar-tools`
+  `sudo apt install perfsonar-tools`
 
-  `owampd` -> inicializar o servidor
+  `owampd` -> inicializa o servidor
 
   `owping <IP_servidor>` -> executa o one-way ping (default: sessão de 10 segundos nas duas direções)
 
 
-* Configurar Docker
+* Configurar OWAMP no Ubuntu-Docker:
 
-  vamo ve
+  `apt-get install -y wget`
+
+  `apt-get install -y gnupg`
+
+  `wget -P /etc/apt/sources.list.d/ http://downloads.perfsonar.net/debian/perfsonar-jessie-release.list`
+
+  `wget -qO - http://downloads.perfsonar.net/debian/perfsonar-debian-official.gpg.key | apt-key add -`
+
+  `apt update`
+
+  `apt install -y perfsonar-tools`
+
+  `owampd` -> inicializa o servidor
+
+  `owping <IP_servidor>` -> executa o one-way ping (não sei como fazer funcionar...)
 
   
 
