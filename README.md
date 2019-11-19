@@ -41,7 +41,7 @@ TRABALHO 2: DOCKER + OWAMP
 
   `apt install -y perfsonar-tools`  ->  aqui tem que colocar uns números, tem que ver como fazer isso no Dockerfile
 
-  `owampd` -> inicializa o servidor
+  `owampd -f` -> inicializa o servidor
 
   `owping <IP_servidor>` -> executa o one-way ping (não sei como fazer funcionar...)
 
