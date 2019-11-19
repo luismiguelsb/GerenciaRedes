@@ -27,6 +27,8 @@ TRABALHO 2: DOCKER + OWAMP
 
 * Configurar OWAMP no Ubuntu-Docker:
 
+  `apt update`
+  
   `apt-get install -y wget`
 
   `apt-get install -y gnupg`
@@ -35,9 +37,9 @@ TRABALHO 2: DOCKER + OWAMP
 
   `wget -qO - http://downloads.perfsonar.net/debian/perfsonar-debian-official.gpg.key | apt-key add -`
 
-  `apt update`
+  `apt update`  ->  denovo...
 
-  `apt install -y perfsonar-tools`
+  `apt install -y perfsonar-tools`  ->  aqui tem que colocar uns números, tem que ver como fazer isso no Dockerfile
 
   `owampd` -> inicializa o servidor
 
