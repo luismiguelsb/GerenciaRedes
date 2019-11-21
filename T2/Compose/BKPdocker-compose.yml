@@ -1,0 +1,15 @@
+version: '3.3'
+
+services:
+    owamp-server:
+        image: owamp-teste:1.0
+        restart: always
+        network_mode: "bridge"
+        command: bash -c "owampd -f; while true; do sleep 5; done"
+
+    owamp-client:
+        image: owamp-teste:1.0
+        restart: always
+        network_mode: "bridge"
+        command: bash -c "while true; do sleep 15; owping 172.17.0.2; done"
+

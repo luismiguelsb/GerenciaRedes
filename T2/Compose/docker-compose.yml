@@ -6,6 +6,10 @@ services:
         volumes:
             - db_data:/var/lib/mysql
         restart: always
+        deploy: 
+            placement: 
+                constraints: 
+                  - node.role==worker
         environment:
             MYSQL_ROOT_PASSWORD: somewordpress
             MYSQL_DATABASE: wordpress
@@ -19,15 +23,39 @@ services:
         ports:
             - "8000:80"
         restart: always
+        deploy: 
+            placement: 
+                constraints: 
+                  - node.role==manager
         environment:
             WORDPRESS_DB_HOST: db:3306
             WORDPRESS_DB_USER: wordpress
             WORDPRESS_DB_PASSWORD: wordpress
             WORDPRESS_DB_NAME: wordpress
 
-    owamp:
-        image: owampd-ubuntu:1.0
+    owamp-server:
+        image: owamp-teste:1.0
         restart: always
+        container_name: owamp-server
+        deploy: 
+            placement: 
+                constraints: 
+                  - node.role==manager
+        # network_mode: "bridge"
+        command: bash -c "owampd -f; while true; do sleep 5; done"
+
+    owamp-client:
+        image: owamp-teste:1.0
+        restart: always
+        container_name: owamp-client
+        deploy: 
+            placement: 
+                constraints: 
+                  - node.role==worker
+        # network_mode: "bridge"
+        command: bash -c "while true; do sleep 15; owping owamp-server; done"
+        
+
 
 volumes:
     db_data: {}

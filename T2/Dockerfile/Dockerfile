@@ -10,9 +10,4 @@ RUN apt-get update \
     && apt-get update \
     && apt install -y perfsonar-tools
 
-ADD scriptOWAMP.sh /tmp/scriptOWAMP.sh
 
-RUN chmod +x /tmp/scriptOWAMP.sh
-
-ENTRYPOINT ["/tmp/scriptOWAMP.sh"]
-    
