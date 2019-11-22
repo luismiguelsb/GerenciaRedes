@@ -2,12 +2,22 @@
 
 TRABALHO 2: DOCKER + OWAMP
 
-* Referências:
+  
+* Como inicializar os containers:
 
-  https://github.com/sonata-nfv/tng-probes/wiki/owamp?fbclid=IwAR3WqMJmsTIdlyDg4q5DevLunQe6fOfG4bsAqVhhMX5J2Nq6hhitR-7wKs8
-
-  https://software.internet2.edu/owamp/
-
+  Primeiro precisa inserir as VMs no Swarm:
+  `docker swarm init` -> na VM que será o Gerente do Swarm (a que você clonou o Git)
+  
+  `docker swarm join --token...blablabla` -> na VM que será o Worker do Swarm (copiar e colar o comando de saída do init)
+  
+  Para confirmar que as duas VMs estão no Swarm:
+  `docker node ls`
+  
+  Agora já pode executar o script (no diretório T2) para inicializar os containers:
+  `bash initDocker.sh`
+  
+  No fim do script vai acessar o terminal do container client OWAMP, os logs estão em /gerenciaRedes/logs
+  
   
 
 * Configurar OWAMP em um Host Linux (normalmente):
@@ -25,25 +35,10 @@ TRABALHO 2: DOCKER + OWAMP
   `owping <IP_servidor>` -> executa o one-way ping (default: sessão de 10 segundos nas duas direções)
 
 
-* Configurar OWAMP no Ubuntu-Docker:
+* Referências:
 
-  `apt update`
-  
-  `apt-get install -y wget`
+  https://github.com/sonata-nfv/tng-probes/wiki/owamp?fbclid=IwAR3WqMJmsTIdlyDg4q5DevLunQe6fOfG4bsAqVhhMX5J2Nq6hhitR-7wKs8
 
-  `apt-get install -y gnupg`
-
-  `wget -P /etc/apt/sources.list.d/ http://downloads.perfsonar.net/debian/perfsonar-jessie-release.list`
-
-  `wget -qO - http://downloads.perfsonar.net/debian/perfsonar-debian-official.gpg.key | apt-key add -`
-
-  `apt update`  ->  denovo...
-
-  `apt install -y perfsonar-tools`  ->  aqui tem que colocar uns números, tem que ver como fazer isso no Dockerfile
-
-  `owampd -f` -> inicializa o servidor
-
-  `owping <IP_servidor>` -> executa o one-way ping (não sei como fazer funcionar...)
-
+  https://software.internet2.edu/owamp/
   
 
