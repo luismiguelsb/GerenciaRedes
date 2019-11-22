@@ -1,7 +1,12 @@
 #!/bin/bash
 
+cd /gerenciaRedes
+mkdir logs
+
 while true;
 do
-    sleep 15;
-    owping 172.17.0.3;
+    if [ -f /gerenciaRedes/owampServerIP.txt ]; then
+        owping $(cat /gerenciaRedes/owampServerIP.txt) > /gerenciaRedes/logs/"$(date +"%FT%T").log";
+    fi
+    sleep 10;
 done

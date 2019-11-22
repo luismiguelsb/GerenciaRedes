@@ -10,4 +10,10 @@ RUN apt-get update \
     && apt-get update \
     && apt install -y perfsonar-tools
 
+RUN mkdir /gerenciaRedes
+
+COPY clientOWAMP.sh /gerenciaRedes/clientOWAMP.sh
+
+COPY serverOWAMP.sh /gerenciaRedes/serverOWAMP.sh
+
 

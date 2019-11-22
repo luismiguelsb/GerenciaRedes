@@ -34,26 +34,24 @@ services:
             WORDPRESS_DB_NAME: wordpress
 
     owamp-server:
-        image: owamp-teste:1.0
+        image: eymaelnicolasdasilva/owamp-ubuntu:1.0
         restart: always
-        container_name: owamp-server
-        deploy: 
-            placement: 
-                constraints: 
-                  - node.role==manager
-        # network_mode: "bridge"
-        command: bash -c "owampd -f; while true; do sleep 5; done"
-
-    owamp-client:
-        image: owamp-teste:1.0
-        restart: always
-        container_name: owamp-client
         deploy: 
             placement: 
                 constraints: 
                   - node.role==worker
-        # network_mode: "bridge"
-        command: bash -c "while true; do sleep 15; owping owamp-server; done"
+        command: sh /gerenciaRedes/serverOWAMP.sh
+
+    owamp-client:
+        depends_on:
+            - owamp-server
+        image: eymaelnicolasdasilva/owamp-ubuntu:1.0
+        restart: always
+        deploy: 
+            placement: 
+                constraints: 
+                  - node.role==manager
+        command: sh /gerenciaRedes/clientOWAMP.sh
         
 
 
