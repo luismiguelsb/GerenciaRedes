@@ -11,7 +11,7 @@ TRABALHO 2: DOCKER + OWAMP
   Em seguida precisa inserir as VMs no Swarm:
   `docker swarm init` -> na VM Manager do Swarm
   
-  `docker swarm join <token> -> na VM que será o Worker do Swarm (onde token é informado pelo Manager e preenchido manualmente pelo Worker)
+  `docker swarm join <token>` -> na VM que será o Worker do Swarm (onde token é informado pelo Manager e preenchido manualmente pelo Worker)
   
   Para confirmar que as duas VMs estão no Swarm:
   `docker node ls`
