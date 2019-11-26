@@ -2,38 +2,25 @@
 
 TRABALHO 2: DOCKER + OWAMP
 
+  Primeiro é necessário clonar o diretório
+  `git clone https://github.com/luismiguelsb/GerenciaRedes/edit/master/` -> Na VM que será o Manager 
+  
   
 * Como inicializar os containers:
 
-  Primeiro precisa inserir as VMs no Swarm:
-  `docker swarm init` -> na VM que será o Gerente do Swarm (a que você clonou o Git)
+  Em seguida precisa inserir as VMs no Swarm:
+  `docker swarm init` -> na VM Manager do Swarm
   
-  `docker swarm join --token...blablabla` -> na VM que será o Worker do Swarm (copiar e colar o comando de saída do init)
+  `docker swarm join <token> -> na VM que será o Worker do Swarm (onde token é informado pelo Manager e preenchido manualmente pelo Worker)
   
   Para confirmar que as duas VMs estão no Swarm:
   `docker node ls`
   
-  Agora já pode executar o script (no diretório T2) para inicializar os containers:
+  Agora já pode executar o script (localizado em gerenciaRedes/T2) para inicializar os containers:
   `bash initDocker.sh`
   
   No fim do script vai acessar o terminal do container client OWAMP, os logs estão em /gerenciaRedes/logs
   
-  
-
-* Configurar OWAMP em um Host Linux (normalmente):
-
-  `sudo wget -P /etc/apt/sources.list.d/ http://downloads.perfsonar.net/debian/perfsonar-jessie-release.list`
-
-  `sudo wget -qO - http://downloads.perfsonar.net/debian/perfsonar-debian-official.gpg.key | sudo apt-key add -`
-
-  `sudo apt update`
-
-  `sudo apt install perfsonar-tools`
-
-  `owampd` -> inicializa o servidor
-
-  `owping <IP_servidor>` -> executa o one-way ping (default: sessão de 10 segundos nas duas direções)
-
 
 * Referências:
 
